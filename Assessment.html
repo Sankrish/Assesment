@@ -1,0 +1,155 @@
+<!Doctype html>
+<html>
+   <head>
+      <style type="text/css">
+         /* Center Canvas Element */
+         canvas {
+         border: 1px solid #CCC;
+         position: absolute;
+         top:20%;
+         left:25%;
+         }
+         #ballCount{
+         color:red;
+         }
+      </style>
+   </head>
+   <body>
+      <div>
+         <canvas onclick="addBall()" id="mycanvas">
+         </canvas>
+         Number of Balls in the box : &nbsp;<span id="ballCount"></span><br/> 
+         Slide Me to adjust speed  &nbsp;<input id="speedx" type="range" min="1" max="10"    
+            oninput="showVal(this.value)" onchange="showVal(this.value)" /> <br/>
+         Click to Know the box wall collisions count &nbsp;<input type="button" id="newBTN" value="Click Me" onclick="showAlert();"/>
+      </div>
+      <script>
+         var mycanvas =document.getElementById("mycanvas");
+          
+         var ctx=mycanvas.getContext("2d");
+         var w=500,h=500;
+         
+         //canvas styles
+         mycanvas.height=h;
+         mycanvas.width=w;
+         
+         //balls array
+         var ball=[];
+          
+         function Ball(x,y,r,c,vx,vy){
+           this.x=x; //starting x coordinate
+           this.y=y; //starting x coordinate
+           this.r=r; //radius  
+           this.c=c; //color 
+           this.vx=vx; // x direction speed
+           this.vy=vy; // y direction speed
+           this.update=function(){
+                 ctx.beginPath();
+             ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
+             ctx.fillStyle = this.c;
+             ctx.fill();
+             ctx.closePath();
+             this.x += this.vx;
+             this.y += this.vy;
+             //changeSpeed(this);    
+                 if(this.y>=(w-10)||this.y<=10){
+                 this.vy=-this.vy;
+                  }
+                 if(this.x>=(h-10)||this.x<=10){
+                 this.vx=-this.vx;
+                  }
+         
+         }
+         }
+         
+         
+         //clearing canvas
+         function clearCanvas(){
+         ctx.clearRect(0, 0, w, h);
+         }
+         
+         var color = ["#ffff00","#bfff00","#80ff00","#00ff80","#00ffff","#007fff","#4000ff","#7f00ff","#ff0040","#808080"];//colors for balls
+         var count=0;//counting balls
+         
+         //adding balls
+         function addBall(){
+         
+           //Limiting the balls count to 20, can be overriden
+           if(count<20){ 
+           document.getElementById("ballCount").innerHTML = count ;
+           var rndColor=Math.floor((Math.random() * 9) + 1); //random color
+           var rndX= 8 ;      
+           var rndY= 8 ;                        
+           ball[count]= new Ball(Math.floor((Math.random() * 490) + 1),Math.floor((Math.random() * 490)+1),Math.floor((Math.random() * 10) + 5),color[rndColor],rndX,rndY);
+           count++;
+         }
+         }
+         
+         //updating canvas
+         function update(){
+           var i;
+           clearCanvas();
+           for(i=0;i<count;i++){
+            if(ball[i].vx == -(ball[i].vy) || ball[i].vy == -(ball[i].vx)) {
+                   collisionCount++;
+                  }    
+         
+           ball[i].update();
+         }
+         
+         }
+         
+         var collisionCount = 0;  
+         setInterval(update, 1000/60);
+         
+         
+         function showVal(valueFromInput){
+           if(valueFromInput){
+             
+              var fr = parseInt(valueFromInput); 
+                var rndX=Math.floor(( fr * 8) + 1);     //random starting velocity
+                var rndY=Math.floor(( fr * 8) + 1);     //random starting velocity
+         
+              var i;
+               
+               for(i=0;i<count;i++){ 
+         
+                 
+                  thisObj = ball[i];                                           
+                  var x = parseInt(this.x);
+                  var y = parseInt(this.y);
+                  var vx = parseInt(this.vx);
+                  var vy = parseInt(this.vy);
+         
+                  x +=  rndX;
+                  y +=  rndY;
+                
+                 if( y>=(w-10)|| y<=10){
+                 vy=-rndY;
+                 thisObj.vy = vy;
+                  }
+                 if(x>=(h-10)|| x<=10){
+                  vx=-rndX;
+                  thisObj.vx=-rndX;
+                  }     
+         
+                  
+             } 
+              
+           }
+           setInterval(update, 1000/60);
+                   
+         
+         
+         }
+         
+         function showAlert () {                       
+         alert(collisionCount);
+         }
+         
+         
+         
+      </script>
+   </body>
+</html>
+ 
